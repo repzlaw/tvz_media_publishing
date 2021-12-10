@@ -11,82 +11,6 @@ use App\Models\CompetitionFollower;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-//follow or unfollow competition
-function competitionFollowSystem($event_id)
-{
-    $user=Auth::user();
-        if ($user->isFollowingCompetition($user->id, $event_id)){
-            CompetitionFollower::where(['competition_id'=>$event_id, 'user_id'=>$user->id])->delete();
-            return false;
-        }
-
-        $date = date("Y/m/d");
-        $follow = CompetitionFollower::firstOrNew([
-            'competition_id' => $event_id,
-            'user_id' => $user->id,
-        ]);
-        $follow->follow_date = $date;
-        $follow->save();
-        return true;
-}
-
-//follow or unfollow player
-function playerFollowSystem($player_id)
-{
-    $user=Auth::user();
-        if ($user->isFollowingPlayer($user->id, $player_id)){
-            PlayerFollower::where(['player_id'=>$player_id, 'user_id'=>$user->id])->delete();
-            return false;
-        }
-
-        $date = date("Y/m/d");
-        $follow = PlayerFollower::firstOrNew([
-            'player_id' => $player_id,
-            'user_id' => $user->id,
-        ]);
-        $follow->follow_date = $date;
-        $follow->save();
-        return true;
-}
-
-//follow or unfollow team
-function teamFollowSystem($team_id)
-{
-    $user=Auth::user();
-        if ($user->isFollowingTeam($user->id, $team_id)){
-            TeamFollower::where(['team_id'=>$team_id, 'user_id'=>$user->id])->delete();
-            return false;
-        }
-
-        $date = date("Y/m/d");
-        $follow = TeamFollower::firstOrNew([
-            'team_id' => $team_id,
-            'user_id' => $user->id,
-        ]);
-        $follow->follow_date = $date;
-        $follow->save();
-        return true;
-}
-
-//follow or unfollow user
-function userFollowSystem($followed_user_id)
-{
-    $user=Auth::user();
-    if ($user->isFollowingUser($user->id, $followed_user_id)){
-        Friend::where(['followed_user_id'=>$followed_user_id, 'user_id'=>$user->id])->delete();
-        return false;
-    }
-
-    $date = date("Y/m/d");
-    $follow = Friend::firstOrNew([
-        'followed_user_id' => $followed_user_id,
-        'user_id' => $user->id,
-    ]);
-    $follow->follow_date = $date;
-    $follow->save();
-    return true;
-}
-
 //process image function
 function process_image($image)
 {
@@ -131,35 +55,6 @@ function searchUser($query, $from)
             }
         }
         return $output;
-
-}
-
-// fun to search team
-function searchTeam($query, $from)
-{
-    $q = $query;
-    $output= ' ';
-    if ($q != null) {
-        $team = Team::where('team_name', 'like', "%$q%")->limit(5)->get();
-        if (count($team)) {
-            if ($from === 'user') {
-                foreach ($team as $key => $p) {
-                    $output .= "
-                    <li class='list-group-item' onclick='selectteam($p)'>".$p->team_name."</li>
-                    ";
-                }
-            }elseif ($from === 'modal') {
-                foreach ($team as $key => $p) {
-                    $output .= "
-                    <li class='list-group-item' onclick='selectteamModal($p)'>".$p->team_name."</li>
-                    ";
-                }
-            }
-        } else {
-            $output = 'No Result';
-        }
-    }
-    return $output;
 
 }
 
@@ -250,73 +145,6 @@ function getBrowser()
     );
 }
 
-//get parent model
-function getCommentModel($mod)
-{
-    $model = '';
-    $parentModel = '';
-
-    if ($mod === 'news') {
-        $model = 'App\Models\NewsCommentUpvote';
-        $parentModel = 'App\Models\NewsComment';
-    } else if($mod === 'player') {
-        $model = 'App\Models\PlayerCommentUpvote';
-        $parentModel = 'App\Models\PlayerComment';
-    } else if($mod === 'team') {
-        $model = 'App\Models\TeamCommentUpvote';
-        $parentModel = 'App\Models\TeamComment';
-    } else if($mod === 'match') {
-        $model = 'App\Models\MatchCommentUpvote';
-        $parentModel = 'App\Models\MatchComment';
-    }
-    if ($model) {
-        return response()->json(['model'=>$model, 'parentModel'=>$parentModel]);
-    }
-    return abort(404,"Page not found");
-
-}
-
-//func to check if a user has upvoted a comment
-function checkUpvoted($mod, $comment_id, $user_id){
-    if (Auth::check()) {
-        $model = '';
-        $parentModel = '';
-
-        if ($mod === 'news') {
-            $model = 'App\Models\NewsCommentUpvote';
-            $parentModel = 'App\Models\NewsComment';
-        } else if($mod === 'player') {
-            $model = 'App\Models\PlayerCommentUpvote';
-            $parentModel = 'App\Models\PlayerComment';
-        } else if($mod === 'team') {
-            $model = 'App\Models\TeamCommentUpvote';
-            $parentModel = 'App\Models\TeamComment';
-        } else if($mod === 'match') {
-            $model = 'App\Models\MatchCommentUpvote';
-            $parentModel = 'App\Models\MatchComment';
-        }
-
-        if ($model) {
-            $upvote = $model::where(['user_id'=>$user_id, 'comment_id'=>$comment_id])->first();
-            $status = $upvote ? true : false;
-
-            return response()->json(['status'=>$status, 'upvote'=>$upvote, 'model'=>$model, 'parentModel'=>$parentModel]);
-        }
-    }
-    return response()->json(['status'=>false]);
-}
-
-//get friends count
-function friendCount($id)
-{
-    $follow = Friend::where(['followed_user_id'=>$id, 'status'=>'active'])
-                                    ->count();
-
-    $following = Friend::where(['user_id'=>$id, 'status'=>'active'])
-                                    ->count();
-
-    return $follow + $following;
-}
 
 //get active guard
 function activeGuard(){

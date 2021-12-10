@@ -20,7 +20,7 @@
                                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{{ route('admin.task.store')}}" method="post" class="form-group" enctype="multipart/form-data">
+                                    <form action="{{ route('task.store')}}" method="post" class="form-group" enctype="multipart/form-data">
                                             {{ csrf_field() }}
                                       <div class="form-group row">
 
@@ -49,49 +49,24 @@
                                         </div>
                                         <div class="input-group mb-4 col-md-6" >
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text">Link</span>
-                                            </div>
-                                            <select class="form-control custom-select" name="region_target" required>
-                                                <option value="">-- Select Link -- </option>
-                                                @foreach ($regions as $region)
-                                                <option value="{{$region->id}}">{{$region->name}} </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="input-group mb-4 col-md-6" >
-                                            <div class="input-group-prepend">
                                                 <span class="input-group-text">Website</span>
                                             </div>
-                                            <select class="form-control custom-select" name="region_target" required>
+                                            <select class="form-control custom-select" name="website_id" required>
                                                 <option value="">-- Select Website -- </option>
-                                                @foreach ($regions as $region)
-                                                <option value="{{$region->id}}">{{$region->name}} </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="input-group mb-4 col-md-6" >
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">Payout</span>
-                                            </div>
-                                            <select class="form-control custom-select" name="region_target" required>
-                                                <option value="">-- Select Payout -- </option>
-                                                @foreach ($regions as $region)
-                                                <option value="{{$region->id}}">{{$region->name}} </option>
+                                                @foreach ($websites as $website)
+                                                <option value="{{$website->id}}">{{$website->url}} </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div  class="col-12 col-md-6 mb-3">
-                                            {{-- <div id="user-bagde" class="mb-2"></div> --}}
                                             <input placeholder="search User" autocomplete="off" type="text" size="30" name="user_name" class="form-control" id="user_name" onkeyup="searchUser(this.value)" required>
                                             <ul id="user-search" class="list-group"></ul>
 
                                         </div>
                                          <input type="hidden" name="assigned_to" id="user_id" class="form-control" value="{{ old('assigned_to') }}" required>
-                                        <!-- <br>
-                                        </div> -->
                                         <textarea name="instructions" id="instructions" rows="5" class="form-control"  placeholder="type instructions ..." value="{{ old('instructions') }}" required></textarea>
                                       <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        {{-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> --}}
                                         <button type="submit" class="btn btn-primary" id = "modal-save">Save changes</button>
                                       </div>
                                   </form>
@@ -138,13 +113,10 @@ function searchUser(str) {
 }
 
 //select user
-
 function selectUser(user) {
     $('#user_id').val(user.id);
     $('#user_name').val(user.name);
     $('#user-search').html('');
-
-console.log(user);
 }
 
 </script>

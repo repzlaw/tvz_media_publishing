@@ -10,37 +10,72 @@
                 <div class="card-hover-shadow-2x mb-3 mt-3 card">
                     <div class="card-header-tab card-header">
                         <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                           Create Tasks
-                        </div>
-                        <div class=" float-right">
-                            <p><a href="{{route('admin.task.create-view')}}" class="btn btn-primary btn-sm"  id="create-button">Create Task</a></p>
+                           {{-- Edit Tasks --}}
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="modal-content">
+                                <div class="modal-header">
+                                  <h4 class="modal-title">Edit Task</h4>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('task.update')}}" method="post" class="form-group" enctype="multipart/form-data">
+                                            {{ csrf_field() }}
+                                      <div class="form-group row">
 
-                        <table id="log_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
-                            <thead>
-                                <tr>
-                                <th width="3%">#</th>
-                                <th width="7%">task</th>
-                                <th width="7%">topic</th>
-                                <th width="10%">instructions</th>
-                                <th width="10%">Date & Time</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($tasks as $key =>$log)
-                                    <tr>
-                                        <td>{{$key+1}}</td>
-                                        <td>{{$log->task}}</td>
-                                        <td>{{$log->topic}}</td>
-                                        <td>{{$log->instructions}}</td>
-                                        <td>{{$log->created_at}}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                        {{ $tasks->links() }}
+                                        <div class="input-group mb-4" >
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Task</span>
+                                            </div>
+                                            <input  type="text" name="task" class="form-control"  value="{{$task->task }}" required>
+                                        </div>
+                                        <div class="input-group mb-4" >
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Topic</span>
+                                            </div>
+                                            <input  type="text" name="topic" class="form-control" value="{{ $task->topic }}" required>
+                                        </div>
+                                        <div class="input-group mb-4 col-md-6" >
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Region</span>
+                                            </div>
+                                            <select class="form-control custom-select" id="region_target" name="region_target" required>
+                                                <option value="">-- Select Region -- </option>
+                                                @foreach ($regions as $region)
+                                                <option value="{{$region->id}}">{{$region->name}} </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="input-group mb-4 col-md-6" >
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">Website</span>
+                                            </div>
+                                            <select class="form-control custom-select" id="website_id" name="website_id" required>
+                                                <option value="">-- Select Website -- </option>
+                                                @foreach ($websites as $website)
+                                                <option value="{{$website->id}}">{{$website->url}} </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div  class="col-12 col-md-6 mb-3">
+                                            {{-- <div id="user-bagde" class="mb-2"></div> --}}
+                                            <input placeholder="search User" autocomplete="off" type="text" size="30" name="user_name" class="form-control" id="user_name" value="{{$assigned_user->name}}" onkeyup="searchUser(this.value)" required>
+                                            <ul id="user-search" class="list-group"></ul>
+
+                                        </div>
+                                         <input type="hidden" name="assigned_to" id="user_id" class="form-control" value="{{ $task->assigned_to }}" required>
+                                         <input type="hidden" name="task_id" id="task_id" class="form-control" value="{{ $task->id }}" required>
+
+                                        <textarea name="instructions" id="instructions" rows="5" class="form-control"  placeholder="type instructions ..." value="{{ old('instructions') }}" required>{{ $task->instructions }}</textarea>
+                                      <div class="modal-footer">
+                                        {{-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> --}}
+                                        <button type="submit" class="btn btn-primary" id = "modal-save">Save changes</button>
+                                      </div>
+                                  </form>
+                                </div>
+                              </div>
+                        </div>
 
                     </div>
 
@@ -54,72 +89,43 @@
     </div>
 </div>
 
-<!-- create task modal -->
-<div class="modal fade" tabindex="-1" role="dialog" id= "create-modal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Create task</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body">
-            <form action="{{ route('admin.task.create-view')}}" method="post" class="form-group" enctype="multipart/form-data">
-                    {{ csrf_field() }}
-              <div class="form-group">
+<!-- Edit task modal -->
 
-                <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Task</span>
-                    </div>
-                    <input  type="text" name="task" class="form-control"  value="{{ old('task') }}" required>
-                </div>
-                <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Topic</span>
-                    </div>
-                    <input  type="text" name="topic" class="form-control" value="{{ old('topic') }}" required>
-                </div>
-                <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Assign to</span>
-                    </div>
-                    <input  type="text" name="instructions" class="form-control" placeholder="select user ..." value="{{ old('instructions') }}" required>
-                </div>
-                <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{ old('featured_image') }}" required> -->
-                <!-- <br>
-                </div> -->
-                <textarea name="instructions" id="instructions" rows="5" class="form-control"  placeholder="enter instructions ..." value="{{ old('instructions') }}" required></textarea>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" id = "modal-save">Save changes</button>
-              </div>
-          </form>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-</div>
   <!-- /.modal -->
 @endsection
 
 @section('scripts')
 <script>
-//create modal
-// $('#create-button').on('click',function(event){
-//     event.preventDefault();
-//     $('#create-modal').modal();
-// });
+$(document).ready(function() {
+    $('#region_target').val({{$task->region_target}});
+    $('#website_id').val({{$task->website_id}});
+});
+//function for player live search
+function searchUser(str) {
+    $.ajax({
+        method: 'POST',
+        url: '{{ route('search-user')}}',
+        data:{q: str,"_token": "{{ csrf_token() }}", from:'admin'}
 
-//modal to edit sport
-function edit(sport){
-    // console.log(sport);
-    $('#meta_description').val(sport.meta_description);
-    $('#page_title').val(sport.page_title);
-    $('#sport_type').val(sport.sport_type);
-    $('#sport_id').val(sport.id);
-    $('#edit-modal').modal();
+    })
+    .done(function(msg){
+        if (msg.length) {
+            $('#user-search').html(msg);
+        }
+    })
+    .fail(function(xhr, status, error) {
+        // alert(error)
+    });
+
+}
+
+//select user
+
+function selectUser(user) {
+    $('#user_id').val(user.id);
+    $('#user_name').val(user.name);
+    $('#user-search').html('');
+
 }
 
 </script>

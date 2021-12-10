@@ -12,31 +12,62 @@
                         <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                             Tasks
                         </div>
-                        <div class=" float-right">
-                            <p><a href="{{route('admin.task.create-view')}}" class="btn btn-primary btn-sm"  id="create-button">Create Task</a></p>
+                        <div class=" float-end">
+                            @if (Auth::user()->type ==='Admin')
+                                <p><a href="{{route('task.create-view')}}" class="btn btn-primary btn-sm"  id="create-button">Create Task</a></p>
+
+                            @else
+
+                            @endif
                         </div>
                     </div>
                     <div class="card-body">
                         <p>page {{ $tasks->currentPage() }} of {{ $tasks->lastPage() }} , displaying {{ count($tasks) }} of {{ $tasks->total() }} record(s) </p>
 
-                        <table id="log_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
+                        <table id="task_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
                             <thead>
                                 <tr>
-                                <th width="3%">#</th>
-                                <th width="7%">task</th>
-                                <th width="7%">topic</th>
-                                <th width="10%">instructions</th>
-                                <th width="10%">Date & Time</th>
+                                    <th width="3%">#</th>
+                                    <th width="27%">task</th>
+                                    <th width="27%">topic</th>
+                                    <th width="30%">instructions</th>
+                                    <th width="10%">status</th>
+                                    <th width="5%">action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($tasks as $key =>$log)
+                                @foreach ($tasks as $key =>$task)
                                     <tr>
                                         <td>{{$key+1}}</td>
-                                        <td>{{$log->task}}</td>
-                                        <td>{{$log->topic}}</td>
-                                        <td>{{$log->instructions}}</td>
-                                        <td>{{$log->created_at}}</td>
+                                        <td>{{$task->task}}</td>
+                                        <td>{{$task->topic}}</td>
+                                        <td>{{$task->instructions}}</td>
+                                        <td>{{$task->status}}</td>
+                                        <td class="text-center">
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-th"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @if (Auth::user()->type ==='Admin')
+                                                        <a href="{{route('task.edit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Edit</a>
+                                                        @if ($task->status !== 'Pending')
+                                                            <a href="{{route('task.review-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Review</a>
+                                                            
+                                                        @endif
+                                                    @else
+                                                        <a href="{{route('task.submit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Submit</a>
+
+                                                        {{-- <a href="{{route('task.submit-view',['id'=>$task->id])}}">
+                                                            <button class=" btn-icon btn-hover-shine btn-shadow btn-dashed btn btn-outline-success btn-sm">Submit</button>
+                                                        </a> --}}
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            
+                                            
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -55,73 +86,11 @@
     </div>
 </div>
 
-<!-- create task modal -->
-<div class="modal fade" tabindex="-1" role="dialog" id= "create-modal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Create task</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body">
-            <form action="{{ route('admin.task.create-view')}}" method="post" class="form-group" enctype="multipart/form-data">
-                    {{ csrf_field() }}
-              <div class="form-group">
-
-                <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Task</span>
-                    </div>
-                    <input  type="text" name="task" class="form-control"  value="{{ old('task') }}" required>
-                </div>
-                <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Topic</span>
-                    </div>
-                    <input  type="text" name="topic" class="form-control" value="{{ old('topic') }}" required>
-                </div>
-                <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Assign to</span>
-                    </div>
-                    <input  type="text" name="instructions" class="form-control" placeholder="select user ..." value="{{ old('instructions') }}" required>
-                </div>
-                <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{ old('featured_image') }}" required> -->
-                <!-- <br>
-                </div> -->
-                <textarea name="instructions" id="instructions" rows="5" class="form-control"  placeholder="enter instructions ..." value="{{ old('instructions') }}" required></textarea>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" id = "modal-save">Save changes</button>
-              </div>
-          </form>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-</div>
-  <!-- /.modal -->
 @endsection
 
 @section('scripts')
 <script>
-//create modal
-// $('#create-button').on('click',function(event){
-//     event.preventDefault();
-//     $('#create-modal').modal();
-// });
 
-//modal to edit sport
-function edit(sport){
-    // console.log(sport);
-    $('#meta_description').val(sport.meta_description);
-    $('#page_title').val(sport.page_title);
-    $('#sport_type').val(sport.sport_type);
-    $('#sport_id').val(sport.id);
-    $('#edit-modal').modal();
-}
 
 </script>
 

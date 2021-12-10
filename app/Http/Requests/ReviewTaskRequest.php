@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Requests\ReviewTaskRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreTaskRequest extends FormRequest
+class ReviewTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,12 +24,9 @@ class StoreTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'task'=>'required',
-            'topic'=>'required',
-            'instructions'=>'required',
-            'region_target'=>'required',
-            'website_id'=>'required',
-            'assigned_to'=>'required',
+            'status'=>'required',
+            'feedback'=>'required',
+            // 'task_id'=>'required',
         ];
     }
 }

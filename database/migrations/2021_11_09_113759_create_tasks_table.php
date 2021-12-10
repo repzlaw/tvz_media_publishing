@@ -23,6 +23,7 @@ class CreateTasksTable extends Migration
             $table->dateTime('task_submitted_on')->nullable();
             $table->string('word_limit')->nullable();
             $table->string('time_limit')->nullable();
+            $table->string('file_path')->nullable();
             $table->uuid('assigned_to');
             $table->foreign('assigned_to')->references('id')->on('users');
             $table->foreignId('region_target')->constrained('regions')->onDelete('cascade');
@@ -32,7 +33,9 @@ class CreateTasksTable extends Migration
             $table->string('payout_id')->nullable();
             $table->string('Published_date')->nullable();
             $table->string('Published_url')->nullable();
-            $table->string('link_id')->nullable();
+            $table->foreignId('link_id')->nullable()->constrained('links')->onDelete('cascade');
+            $table->enum('status', ['Submitted', 'Pending', 'Correction Required', 'Approved'])->default('Pending');
+            $table->string('feedback')->nullable();
             $table->timestamps();
         });
     }
