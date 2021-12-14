@@ -56,7 +56,7 @@
                 <ul class="navbar-nav me-auto">
                 </ul>
                 <!-- Right Side Of Navbar -->
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav me-auto">
                     <!-- Authentication Links -->
                     @if(!Auth::check())
                         <li class="nav-item">
@@ -65,12 +65,19 @@
                     @else
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->username }}
+                                {{ Auth::user()->name }}
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('logout') }}">
+                            <div class="dropdown-menu dropdown-menu-right me-5" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="event.preventDefault();
+                                                    document.getElementById('logout-form').submit();">
+                                    <i class="fa fa-sign-out-alt text-danger mr-2"></i>
                                     {{ __('Logout') }}
                                 </a>
+
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    @csrf
+                                </form>
                             </div>
                         </li>
                     @endif
@@ -87,7 +94,7 @@
           <li class="nav-item">
             <a class="nav-link active" href="/">
                 <i class="fa fa-home me-2"></i>
-              Dashboard <span class="sr-only">(current)</span>
+              Dashboard
             </a>
           </li>
           @if (Auth::user()->type === 'Admin')
@@ -98,9 +105,16 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">
+                <a class="nav-link" href="{{ route('admin.region.all') }}">
                     <i class="fa fa-globe me-2"></i>
                 Regions
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.website.all') }}">
+                    <i class="fa fa-cloud me-2"></i>
+                Websites
                 </a>
             </li>
 

@@ -25,14 +25,14 @@ class CreateTasksTable extends Migration
             $table->string('time_limit')->nullable();
             $table->string('file_path')->nullable();
             $table->uuid('assigned_to');
-            $table->foreign('assigned_to')->references('id')->on('users');
+            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('region_target')->constrained('regions')->onDelete('cascade');
             $table->foreignId('website_id')->constrained('websites')->onDelete('cascade');
             $table->enum('task_type', ['Internal', 'External'])->default('Internal');
             $table->string('payout_amount')->nullable();
             $table->string('payout_id')->nullable();
-            $table->string('Published_date')->nullable();
-            $table->string('Published_url')->nullable();
+            $table->string('published_date')->nullable();
+            $table->string('published_url')->nullable();
             $table->foreignId('link_id')->nullable()->constrained('links')->onDelete('cascade');
             $table->enum('status', ['Submitted', 'Pending', 'Correction Required', 'Approved'])->default('Pending');
             $table->string('feedback')->nullable();

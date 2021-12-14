@@ -80,7 +80,10 @@
 
                                                 @endif
                                             <td class="text-center m-auto">
-                                                <i class='fa fa-edit text-success mr-3' style='cursor: pointer;' onclick='editUser({{$user}})'></i>
+                                                <i class='fa fa-edit text-success me-3' style='cursor: pointer;' onclick='editUser({{$user}})'></i>
+                                                <a href="{{ route('admin.user.delete',[ 'id'=>$user->id])}}">
+                                                    <i class='fa fa-trash text-danger me-3' style='cursor: pointer;'></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     @endforeach

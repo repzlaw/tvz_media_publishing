@@ -12,7 +12,7 @@
                         <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                             Tasks
                         </div>
-                        <div class=" float-end">
+                        <div class="float-end">
                             @if (Auth::user()->type ==='Admin')
                                 <p><a href="{{route('task.create-view')}}" class="btn btn-primary btn-sm"  id="create-button">Create Task</a></p>
 
@@ -54,7 +54,7 @@
                                                         <a href="{{route('task.edit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Edit</a>
                                                         @if ($task->status !== 'Pending')
                                                             <a href="{{route('task.review-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Review</a>
-                                                            
+
                                                         @endif
                                                     @else
                                                         <a href="{{route('task.submit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Submit</a>
@@ -65,8 +65,8 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                            
-                                            
+
+
                                         </td>
                                     </tr>
                                 @endforeach

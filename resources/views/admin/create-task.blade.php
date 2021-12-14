@@ -17,7 +17,6 @@
                         <div class="modal-content">
                                 <div class="modal-header">
                                   <h4 class="modal-title">Create Task</h4>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('task.store')}}" method="post" class="form-group" enctype="multipart/form-data">
@@ -26,7 +25,7 @@
 
                                         <div class="input-group mb-4" >
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text">Task</span>
+                                                <span class="input-group-text">Task Description</span>
                                             </div>
                                             <input  type="text" name="task" class="form-control"  value="{{ old('task') }}" required>
                                         </div>
@@ -36,35 +35,109 @@
                                             </div>
                                             <input  type="text" name="topic" class="form-control" value="{{ old('topic') }}" required>
                                         </div>
-                                        <div class="input-group mb-4 col-md-6" >
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">Region</span>
+                                        <div class="row">
+                                            <div class="mb-4 col-md-6" >
+                                                <div class="input-group" >
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Word Limit(in words)</span>
+                                                    </div>
+                                                    <input  type="number" name="word_limit" class="form-control" value="{{ old('word_limit') }}" required>
+                                                </div>
                                             </div>
-                                            <select class="form-control custom-select" name="region_target" required>
-                                                <option value="">-- Select Region -- </option>
-                                                @foreach ($regions as $region)
-                                                <option value="{{$region->id}}">{{$region->name}} </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="input-group mb-4 col-md-6" >
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text">Website</span>
+                                            <div class="mb-4 col-md-6" >
+                                                <div class="input-group" >
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Time Limit(in hours)</span>
+                                                    </div>
+                                                    <input  type="number" name="time_limit" class="form-control" value="{{ old('time_limit') }}" required>
+                                                </div>
                                             </div>
-                                            <select class="form-control custom-select" name="website_id" required>
-                                                <option value="">-- Select Website -- </option>
-                                                @foreach ($websites as $website)
-                                                <option value="{{$website->id}}">{{$website->url}} </option>
-                                                @endforeach
-                                            </select>
+                                            <div class="mb-3 col-md-6" >
+                                                <div class="input-group mb-4 col-md-6" >
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Region</span>
+                                                    </div>
+                                                    <select class="form-control custom-select" name="region_target" required>
+                                                        <option value="">-- Select Region -- </option>
+                                                        @foreach ($regions as $region)
+                                                        <option value="{{$region->id}}">{{$region->name}} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-6" >
+                                                <div class="input-group mb-4 col-md-6" >
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Website</span>
+                                                    </div>
+                                                    <select class="form-control custom-select" name="website_id" required>
+                                                        <option value="">-- Select Website -- </option>
+                                                        @foreach ($websites as $website)
+                                                        <option value="{{$website->id}}">{{$website->url}} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div  class="col-12 col-md-6 mb-3">
-                                            <input placeholder="search User" autocomplete="off" type="text" size="30" name="user_name" class="form-control" id="user_name" onkeyup="searchUser(this.value)" required>
+                                            <input placeholder="Assign User" autocomplete="off" type="text" size="30" name="user_name" class="form-control" id="user_name" onkeyup="searchUser(this.value)" required>
                                             <ul id="user-search" class="list-group"></ul>
 
                                         </div>
                                          <input type="hidden" name="assigned_to" id="user_id" class="form-control" value="{{ old('assigned_to') }}" required>
+
+                                         <div class="mb-3 col-md-6" >
+                                            <div class="input-group mb-4 col-md-6" >
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Task Type</span>
+                                                </div>
+                                                <select class="form-control custom-select" name="task_type" id="task_type" required>
+                                                    <option value="">-- Select Type -- </option>
+                                                    <option value="Internal">Internal </option>
+                                                    <option value="External">External </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-6" id="internal_url" style="display: none">
+                                            <div class="input-group" >
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">Published URL</span>
+                                                </div>
+                                                <input type="url"  name="published_url" placeholder="enter link" class="form-control" value="{{ old('published_url') }}" >
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4 col-md-6" id="external_url" style="display: none">
+                                            External Published URL <a href="">Add Link</a> | <a href="">Find And Map Link</a>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="mb-4 col-md-6">
+                                                <div class="input-group" >
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">Payout Amount</span>
+                                                    </div>
+                                                    <input type="number"  name="published_url" placeholder="enter amount" class="form-control" value="{{ old('published_url') }}" >
+                                                </div>
+                                            </div>
+                                            <div class="mb-4 col-md-6" >
+                                                <div class="input-group" >
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">USD Payout Amount</span>
+                                                    </div>
+                                                    <input type="number"  name="published_url" class="form-control" value="{{ old('published_url') }}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4 col-md-6">
+                                            Payout Management <a href="">Add Payout</a> | <a href="">Search Payout</a>
+                                        </div>
+
                                         <textarea name="instructions" id="instructions" rows="5" class="form-control"  placeholder="type instructions ..." value="{{ old('instructions') }}" required></textarea>
+
+
                                       <div class="modal-footer">
                                         {{-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> --}}
                                         <button type="submit" class="btn btn-primary" id = "modal-save">Save changes</button>
@@ -118,6 +191,22 @@ function selectUser(user) {
     $('#user_name').val(user.name);
     $('#user-search').html('');
 }
+
+//toggle between external and internal task
+$(function() {
+    $('#task_type').change(function(){
+        if($('#task_type').val() == 'Internal') {
+            $('#external_url').hide();
+            $('#internal_url').show();
+        } else if ($('#task_type').val() == 'External'){
+            $('#internal_url').hide();
+            $('#external_url').show();
+        } else{
+            $('#internal_url').hide();
+            $('#external_url').hide();
+        }
+    });
+});
 
 </script>
 

@@ -18,7 +18,7 @@ class CreateUserLogsTable extends Migration
             $table->string('old_fields')->nullable();
             $table->string('new_fields')->nullable();
             $table->uuid('changed_by');
-            $table->foreign('changed_by')->references('id')->on('users');
+            $table->foreign('changed_by')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

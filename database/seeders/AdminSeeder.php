@@ -18,8 +18,13 @@ class AdminSeeder extends Seeder
             array(
                 'email' => 'work@tvzcorp.com' ,
                 'type' => 'Admin',
-                // 'uuid' => 'weuiiuf-27835-34sh5-3835',
                 'name' => 'tvz corp',
+                'password' => bcrypt('12345678'),
+            ),
+            array(
+                'email' => 'segun@gmail.com' ,
+                'type' => 'Writer',
+                'name' => 'segun josh',
                 'password' => bcrypt('12345678'),
             )
         );

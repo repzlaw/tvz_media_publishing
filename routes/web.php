@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\WebsiteController;
 use App\Http\Controllers\GeneralFunctionsController;
 
 /*
@@ -57,17 +59,42 @@ Route::middleware(['auth'])->group(function () {
             //edit user
             Route::post('/edit', [UserController::class,'edituser'])->name('edit');
 
-            //ban user
-            Route::get('/{id}/ban', [UserController::class,'banUser'])->name('ban-user');
+            // delete user
+            Route::get('/delete/{id}', [UserController::class, 'delete'])->name('delete');
 
-            //unban user
-            Route::get('/{id}/unban', [UserController::class,'unbanUser'])->name('unban-user');
+        });
 
-            //user profile page
-            Route::get('/{id}', [ProfileController::class,'profile'])->name('profile');
+        //regions routes
+        Route::prefix('/regions')->name('region.')->middleware(['admin'])->group(function(){
 
-            //user login logs
-            Route::get('/{id}/login-logs', [ProfileController::class,'loginLogs'])->name('log');
+            // get regions page
+            Route::get('/', [RegionController::class, 'index'])->name('all');
+
+            // delete regions
+            Route::get('/delete/{id}', [RegionController::class, 'delete'])->name('delete');
+
+            //create region
+            Route::post('/create', [RegionController::class,'create'])->name('create');
+
+            //edit region
+            Route::post('/edit', [RegionController::class,'edit'])->name('edit');
+
+        });
+
+        //websites routes
+        Route::prefix('/websites')->name('website.')->middleware(['admin'])->group(function(){
+
+            // get websites page
+            Route::get('/', [WebsiteController::class, 'index'])->name('all');
+
+            // delete websites
+            Route::get('/delete/{id}', [WebsiteController::class, 'delete'])->name('delete');
+
+            //create website
+            Route::post('/create', [WebsiteController::class,'create'])->name('create');
+
+            //edit website
+            Route::post('/edit', [WebsiteController::class,'edit'])->name('edit');
 
         });
     });

@@ -101,4 +101,16 @@ class UserController extends Controller
 
     }
 
+    //delete user
+    public function delete($id)
+    {
+        $delete = User::where('id',$id)->delete();
+
+        if ($delete) {
+            $message = 'User Deleted Successfully!';
+        }
+
+        return redirect()->back()->with(['message' => $message]);
+    }
+
 }

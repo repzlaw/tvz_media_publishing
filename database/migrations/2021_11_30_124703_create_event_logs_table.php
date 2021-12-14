@@ -19,7 +19,7 @@ class CreateEventLogsTable extends Migration
             $table->foreignId('document_id')->constrained()->onDelete('cascade');
             $table->foreignId('message_id')->constrained('messagings')->onDelete('cascade');
             $table->uuid('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('fields_From');
             $table->string('Fields_to');
             $table->timestamps();
