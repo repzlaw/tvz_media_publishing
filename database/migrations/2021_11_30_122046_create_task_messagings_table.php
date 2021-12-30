@@ -18,7 +18,6 @@ class CreateTaskMessagingsTable extends Migration
             $table->foreignId('task_id')->constrained()->onDelete('cascade');
             $table->foreignId('message_id')->constrained('messagings')->onDelete('cascade');
             $table->foreignId('document_id')->constrained()->onDelete('cascade');
-            // $table->string('document_id');
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('message');

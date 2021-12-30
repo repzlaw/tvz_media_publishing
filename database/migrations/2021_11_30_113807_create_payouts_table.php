@@ -17,7 +17,7 @@ class CreatePayoutsTable extends Migration
             $table->id();
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->foreignId('task_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('amount')->nullable();
             $table->enum('status', ['Pending', 'Completed'])->default('Pending');
             $table->timestamps();

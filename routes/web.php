@@ -1,11 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\LinkController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\PayoutController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\Admin\WebsiteController;
 use App\Http\Controllers\GeneralFunctionsController;
+use App\Http\Controllers\TaskConversationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +23,7 @@ use App\Http\Controllers\GeneralFunctionsController;
 */
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/', function () {return view('home');})->name('home');
+    Route::get('/', [HomeController::class,'index'])->name('home');
 
     Route::post('/search-user', [GeneralFunctionsController::class,'searchUser'])->name('search-user');
 
@@ -35,7 +39,19 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/review/{id}', [TaskController::class,'reviewView'])->name('review-view');
         Route::post('/submit-review', [TaskController::class,'submitReview'])->name('submit-review');
         Route::post('/download-document', [TaskController::class,'downloadDocument'])->name('download-document');
+        Route::post('/search', [TaskController::class, 'searchUser'])->name('search');
 
+        //conversations routes
+        Route::prefix('/conversations')->name('conversation.')->middleware(['verified'])->group(function(){
+            Route::get('/{task_id}', [TaskConversationController::class, 'index'])->name('all');
+            Route::post('/store', [TaskConversationController::class,'store'])->name('store');
+            Route::get('/edit/{id}', [PayoutController::class,'edit'])->name('edit-view');
+            Route::get('/delete/{id}', [PayoutController::class, 'delete'])->name('delete');
+            Route::post('/update', [PayoutController::class,'update'])->name('update');
+            Route::post('/map-to-task', [PayoutController::class,'mapToTask'])->name('map');
+
+
+        });
     });
 
 
@@ -54,10 +70,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/search', [UserController::class, 'searchUser'])->name('search');
 
             //create user
-            Route::post('/create', [UserController::class,'createuser'])->name('create');
+            Route::get('/create', [UserController::class,'createView'])->name('create-view');
+            Route::post('/store', [UserController::class,'createuser'])->name('create');
 
             //edit user
-            Route::post('/edit', [UserController::class,'edituser'])->name('edit');
+            Route::get('/edit/{id}', [UserController::class,'editView'])->name('edit-view');
+            Route::post('/update', [UserController::class,'edituser'])->name('update');
 
             // delete user
             Route::get('/delete/{id}', [UserController::class, 'delete'])->name('delete');
@@ -97,6 +115,33 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/edit', [WebsiteController::class,'edit'])->name('edit');
 
         });
+
+        //payout routes
+        Route::prefix('/payouts')->name('payout.')->middleware(['admin'])->group(function(){
+            Route::get('/', [PayoutController::class, 'index'])->name('all');
+            Route::get('/create', [PayoutController::class, 'create'])->name('create-view');
+            Route::post('/store', [PayoutController::class,'store'])->name('store');
+            Route::get('/edit/{id}', [PayoutController::class,'edit'])->name('edit-view');
+            Route::get('/delete/{id}', [PayoutController::class, 'delete'])->name('delete');
+            Route::post('/update', [PayoutController::class,'update'])->name('update');
+            Route::post('/map-to-task', [PayoutController::class,'mapToTask'])->name('map');
+
+
+        });
+
+        //link routes
+        Route::prefix('/links')->name('link.')->middleware(['admin'])->group(function(){
+            Route::get('/', [LinkController::class, 'index'])->name('all');
+            Route::get('/create', [LinkController::class, 'create'])->name('create-view');
+            Route::post('/store', [LinkController::class,'store'])->name('store');
+            Route::get('/edit/{id}', [LinkController::class,'edit'])->name('edit-view');
+            Route::get('/delete/{id}', [LinkController::class, 'delete'])->name('delete');
+            Route::post('/update', [LinkController::class,'update'])->name('update');
+            Route::post('/map-to-task', [LinkController::class,'mapToTask'])->name('map');
+
+
+        });
+
     });
 });
 

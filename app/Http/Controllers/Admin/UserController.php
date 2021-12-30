@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use HTMLPurifier;
 use HTMLPurifier_Config;
 use App\Models\User;
+use App\Models\Region;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -27,11 +28,18 @@ class UserController extends Controller
     public function index()
     {
         $users = User::
-                    // where('type','!=','Admin')->
-                    paginate(50);
+                        // where('type','!=','Admin')->
+                        paginate(50);
 
         return view('admin/user/index')->with(['users'=> $users]);
+    }
 
+    //create view user
+    public function createView()
+    {
+        $regions = Region::all();
+
+        return view('admin/user/create-user')->with(['regions'=>$regions]);
     }
 
     //search users
@@ -71,6 +79,12 @@ class UserController extends Controller
             'name'=> $request->name,
             'email'=> $request->email,
             'type'=> $request->type,
+            'country'=> $request->country,
+            'bank_details'=> $request->bank_details,
+            'payout_per_word'=> $request->payout_per_word,
+            'fixed_monthly_payout'=> $request->fixed_monthly_payout,
+            'total_payout'=> $request->total_payout,
+            'currency'=> $request->currency,
             'password'=> Hash::make($request->password),
         ]);
 
@@ -81,7 +95,16 @@ class UserController extends Controller
         return redirect('/admin/users')->with(['message' => $message]);
     }
 
-    //edit users
+    //edit view user
+    public function editView($id)
+    {
+        $regions = Region::all();
+        $user = User::findOrFail($id);
+
+        return view('admin/user/edit-user')->with(['user'=>$user, 'regions'=>$regions]);
+    }
+
+    //update users
     public function edituser(StoreUserRequest $request)
     {
         $user = User::findOrFail($request->user_id);
@@ -90,6 +113,12 @@ class UserController extends Controller
             'name'=> $request->name,
             'email'=> $request->email,
             'type'=> $request->type,
+            'country'=> $request->country,
+            'bank_details'=> $request->bank_details,
+            'payout_per_word'=> $request->payout_per_word,
+            'fixed_monthly_payout'=> $request->fixed_monthly_payout,
+            'total_payout'=> $request->total_payout,
+            'currency'=> $request->currency,
             'password'=> $request->password ? Hash::make($request->password) : $user->password,
         ]);
 

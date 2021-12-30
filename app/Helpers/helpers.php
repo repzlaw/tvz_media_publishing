@@ -5,6 +5,7 @@ use App\Models\Team;
 use App\Models\User;
 use App\Models\Friend;
 use App\Models\Player;
+use Illuminate\Support\Str;
 use App\Models\TeamFollower;
 use App\Models\PlayerFollower;
 use App\Models\CompetitionFollower;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 //process image function
 function process_image($image)
 {
+    $random = Str::random(8);
     // Get filename with the extension
     $filenameWithExt = $image->getClientOriginalName();
     //get file name with the extension
@@ -22,7 +24,7 @@ function process_image($image)
     $extension = $image->getClientOriginalExtension();
 
     //filename to store
-    $fileNameToStore = $filename.'_'.time().'.'.$extension;
+    $fileNameToStore = $random.'_'.time().'.'.$extension;
 
     return $fileNameToStore;
 }
@@ -57,6 +59,38 @@ function searchUser($query, $from)
         return $output;
 
 }
+
+//get word count from docx file
+function docx2text($filename) {
+    return readZippedXML($filename, "word/document.xml");
+  }
+ 
+ function readZippedXML($archiveFile, $dataFile) {
+ // Create new ZIP archive
+ $zip = new ZipArchive;
+ 
+ // Open received archive file
+ if (true === $zip->open($archiveFile)) {
+     // If done, search for the data file in the archive
+     if (($index = $zip->locateName($dataFile)) !== false) {
+         // If found, read it to the string
+         $data = $zip->getFromIndex($index);
+         // Close archive file
+         $zip->close();
+         // Load XML from a string
+         // Skip errors and warnings
+         $xml = new DOMDocument();
+     $xml->loadXML($data, LIBXML_NOENT | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING);
+         // Return data without XML formatting tags
+         return strip_tags($xml->saveXML());
+     }
+     $zip->close();
+ }
+ 
+ // In case of failure return empty string
+ return "";
+ }
+
 
 //func to get browser information
 function getBrowser()

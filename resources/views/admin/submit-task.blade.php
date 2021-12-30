@@ -17,7 +17,6 @@
                         <div class="modal-content">
                                 <div class="modal-header">
                                   <h4 class="modal-title">{{$task->task }}</h4>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 </div>
                                 <div class="modal-body">
                                     <form action="{{ route('task.submit-task')}}" method="post" class="form-group" enctype="multipart/form-data">
@@ -31,7 +30,6 @@
                                             @endif
                                             <div class="input-group mb-4" >
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">Add Document</span>
                                                 </div>
                                                 <input  type="file" name="document" class="form-control"  value="{{$task->task}}" required>
                                             </div>
@@ -68,7 +66,7 @@ $(document).ready(function() {
     $('#region_target').val({{$task->region_target}});
     $('#website_id').val({{$task->website_id}});
 });
-//function for player live search
+//function for user live search
 function searchUser(str) {
     $.ajax({
         method: 'POST',

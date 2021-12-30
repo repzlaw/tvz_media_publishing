@@ -24,6 +24,7 @@ class CreateTasksTable extends Migration
             $table->string('word_limit')->nullable();
             $table->string('time_limit')->nullable();
             $table->string('file_path')->nullable();
+            $table->string('word_count')->nullable();
             $table->uuid('assigned_to');
             $table->foreign('assigned_to')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('region_target')->constrained('regions')->onDelete('cascade');

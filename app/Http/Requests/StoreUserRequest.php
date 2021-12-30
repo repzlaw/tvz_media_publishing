@@ -28,6 +28,12 @@ class StoreUserRequest extends FormRequest
             'email' => 'required',
             // 'password' => 'required',
             'type'=> 'required',
+            'country'=> 'required',
+            'bank_details'=> 'required',
+            'payout_per_word'=> 'required',
+            'fixed_monthly_payout'=> 'required',
+            'total_payout'=> 'required',
+            'currency'=> 'required',
         ];
     }
 }

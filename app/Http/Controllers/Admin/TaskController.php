@@ -2,12 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use ZipArchive;
+use DOMDocument;
+use HTMLPurifier;
+use App\Models\Link;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Payout;
 use App\Models\Region;
 use App\Models\Website;
+use HTMLPurifier_Config;
+use App\Models\Publisher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTaskRequest;
@@ -42,7 +50,18 @@ class TaskController extends Controller
     //create task
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::create($request->validated());
+        $task = Task::create([
+            'task'=>$request->task,
+            'topic'=>$request->topic,
+            // 'word_limit'=>$request->word_limit,
+            // 'time_limit'=>$request->time_limit,
+            'region_target'=>$request->region_target,
+            'website_id'=>$request->website_id,
+            'assigned_to'=>$request->assigned_to,
+            'instructions'=>$request->instructions,
+            'task_type'=>$request->task_type,
+            'task_given_on'=>date("Y-m-d H:i:s")
+        ]);
 
         if ($task) {
             $message = 'Task Created Successfully!';
@@ -57,17 +76,33 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         $regions = Region::all();
         $websites = Website::all();
+        $publishers = Publisher::all();
+        $links = Link::all();
         $assigned_user = User::where('id',$task->assigned_to)->first(['name']);
+        $payouts = Payout::where(['task_id'=>null, 'user_id'=>$task->assigned_to])->get();
 
         return view('admin/edit-task')->with(['regions'=>$regions, 'websites'=>$websites,
-                                            'task'=>$task, 'assigned_user'=>$assigned_user]);
+                                            'task'=>$task, 'assigned_user'=>$assigned_user,
+                                            'payouts'=>$payouts, 'publishers'=>$publishers,
+                                            'links'=>$links]);
     }
 
     //update task
     public function update(StoreTaskRequest $request)
     {
+        // dd($request->all());
         $task = Task::findOrFail($request->task_id);
-        $task->update($request->validated());
+        $task->update([
+            'task'=>$request->task,
+            'topic'=>$request->topic,
+            // 'word_limit'=>$request->word_limit,
+            // 'time_limit'=>$request->time_limit,
+            'region_target'=>$request->region_target,
+            'website_id'=>$request->website_id,
+            'assigned_to'=>$request->assigned_to,
+            'instructions'=>$request->instructions,
+            'task_type'=>$request->task_type
+        ]);
 
         if ($task) {
             $message = 'Task Updated Successfully!';
@@ -82,18 +117,20 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
 
         return view('admin/submit-task')->with(['task'=>$task]);
-        // dd($id);
     }
 
     //submit task
     public function submitTask(SubmitTaskRequest $request)
-    {
-        
+    { 
         if ($request->hasFile('document')) {
-            //process image
+            //get document word count
+            $doc_string = docx2text($request->file('document'));
+            $doc_count = str_word_count($doc_string);
+
+            //process doc
             $fileNameToStore = process_image($request->file('document'));
 
-            //store image
+            //store doc
             $path = $request->file('document')->storeAs('public/tasks', $fileNameToStore);
 
             //get old task doc if exist
@@ -106,15 +143,17 @@ class TaskController extends Controller
             }
 
             $tasks = $task->update([
+                'word_count'=>$doc_count,
                 'file_path'=>$fileNameToStore,
                 'status'=>'Submitted',
+                'task_submitted_on'=>date("Y-m-d H:i:s"),
             ]);
 
             if ($tasks) {
                 $message = 'Task Document Uploaded!';
             }
     
-            return redirect('/task')->with(['message'=>$message]);
+            return redirect('/task/conversations/'.$task->id)->with(['message'=>$message]);
         }
     }
 
@@ -139,21 +178,51 @@ class TaskController extends Controller
         return redirect()->back()->with(['message' => $message]);
     }
 
-    //download document
-    public function downloadDocument(Request $request)
+    //search tasks
+    public function searchUser(Request $request)
     {
-        $task = Task::findOrFail($request->task_id);
-        // dd($task);
+        $searchData = $request->input('query');
+        $searchColumn = $request->input('search_column');
+        $tasks= '';
 
-        $file =  "/storage/tasks/" . $task->file_path;
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        $searchData = $purifier->purify($searchData);
+        $searchColumn = $purifier->purify($searchColumn);
 
-        $headers = ['Content-Type: file/docx'];
-// dd($file);
-Storage::download($file);
-        // if (file_exists($file)) {
-        //     return \Response::download($file, $task->file_path, $headers);
-        // } else {
-        //     echo('File not found.');
-        // }
+        if (!is_null($searchData)) {
+            if ($searchColumn==='name') {
+                $tasks = DB::table('tasks as t')
+                            ->join('users as u','u.id','t.assigned_to')
+                            ->where('u.name','like', "%$searchData%")
+                            ->select('t.*')
+                            ->paginate(50);
+            }elseif ($searchColumn==='date') {
+                $tasks = Task::where('task_given_on', 'like', "%$searchData%")->paginate(50);
+            }elseif ($searchColumn==='desc') {
+                $tasks = Task::where('task', 'like', "%$searchData%")->paginate(50);
+            }elseif ($searchColumn==='type') {
+                $tasks = Task::where('task_type', 'like', "%$searchData%")->paginate(50);
+            }elseif ($searchColumn==='region') {
+                $tasks = DB::table('tasks as t')
+                            ->join('regions as r','r.id','t.region_target')
+                            ->where('r.name','like', "%$searchData%")
+                            ->select('t.*')
+                            ->paginate(50);
+            }elseif ($searchColumn==='website') {
+                $tasks = DB::table('tasks as t')
+                            ->join('websites as w','w.id','t.region_target')
+                            ->where('w.website_code','like', "%$searchData%")
+                            ->select('t.*')
+                            ->paginate(50);
+            }
+        }
+
+        if ($tasks) {
+            return view('admin/tasks')->with(['tasks'=> $tasks]);
+        }else{
+            return redirect('tasks/')->with(['message'=>'invalid search column']);
+        }
+
     }
 }

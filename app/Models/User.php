@@ -23,6 +23,12 @@ class User extends Authenticatable
         'email',
         'password',
         'type',
+        'payout_per_word',
+        'country',
+        'bank_details',
+        'fixed_monthly_payout',
+        'total_payout',
+        'currency',
     ];
 
     /**
