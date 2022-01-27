@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-<div class="container mt-2">
+<div class="container">
     <div class="row justify-content-center">
     <div class="col-12">
         <div class="row">
@@ -62,23 +62,26 @@
                                 <b>Start conversation</b>
                             </div>
                         @endif
-
-                        <form action="{{route('task.conversation.store',['task_id'=>$task->id])}}" method="post" class="form-group mt-5" enctype="multipart/form-data">
-                            {{ csrf_field() }}
-                            <div class="interaction mt-3 mb-3 row">
-                                <div class="col-10 col-sm-10" style="padding-right: 0;">
-                                    <textarea placeholder="Add conversation ..." name="message" type="text" 
-                                    class="form-control-lg form-control mb-3" style="border-radius: 20px !important;" required></textarea>
-                                </div>
-                                <div class="col-2 col-sm-2 mt-3 float-right">
-                                    <i class="fa fa-paperclip me-2" style="cursor: pointer" id="attach-button"></i>
-                                    <button type="submit" class="btn btn-primary b-circle ms-2">
-                                        <i class="fa fa-paper-plane"></i>
-                                    </button>
-                                </div> 
-                            </div>
-                            <input type="hidden" name="task_id" value="{{$task->id}}">
-                        </form>
+                        <div id="div1">
+                            @if ($task->status !== 'Cancelled')
+                                <form action="{{route('task.conversation.store',['task_id'=>$task->id])}}" method="post" class="form-group mt-5" enctype="multipart/form-data">
+                                    {{ csrf_field() }}
+                                    <div class="interaction mt-3 mb-3 row">
+                                        <div class="col-10 col-sm-10" style="padding-right: 0;">
+                                            <textarea placeholder="Add conversation ..." name="message" type="text" 
+                                            class="form-control-lg form-control mb-3" style="border-radius: 20px !important;" required></textarea>
+                                        </div>
+                                        <div class="col-2 col-sm-2 mt-3 float-right">
+                                            <i class="fa fa-paperclip me-2" style="cursor: pointer" id="attach-button"></i>
+                                            <button type="submit" class="btn btn-primary b-circle ms-2">
+                                                <i class="fa fa-paper-plane"></i>
+                                            </button>
+                                        </div> 
+                                    </div>
+                                    <input type="hidden" name="task_id" value="{{$task->id}}">
+                                </form>
+                            @endif
+                        </div>
 
                     </div>
                 </div>
@@ -127,6 +130,10 @@
 
 @section('scripts')
 <script>
+$(document).ready(function() {
+    $("html, body").animate({ scrollTop: $(document).height() }, 0000);
+});
+
 //create modal
 $('#attach-button').on('click',function(event){
     event.preventDefault();

@@ -31,7 +31,8 @@ class StoreTaskRequest extends FormRequest
             'region_target'=>'required',
             'website_id'=>'required',
             'assigned_to'=>'required',
-            'task_type'=>'required'
+            'task_type'=>'required',
+            'status'=>'required'
         ];
     }
 }

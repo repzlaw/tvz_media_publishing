@@ -17,7 +17,7 @@ class Website extends Model
      *
      * @var array
      */
-    protected $with = ['region','parent'];
+    // protected $with = ['region','parent'];
 
     /**
      * Get the region the website is for.

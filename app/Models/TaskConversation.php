@@ -23,4 +23,11 @@ class TaskConversation extends Model
     {
         return $this->belongsTo(User::class,'sender_id');
     }
+    /**
+     * Get the task the convo is for.
+     */
+    public function task()
+    {
+        return $this->belongsTo(Task::class,'task_id');
+    }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWebsiteRequest extends FormRequest
+class CancelTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,8 @@ class StoreWebsiteRequest extends FormRequest
     public function rules()
     {
         return [
-            'url'=>'required',
-            'website_code'=>'required',
-            'region_id'=>'required',
-            // 'parent_id'=>'required',
+            'task_id'=>'required',
+            'reason'=>'required',
         ];
     }
 }

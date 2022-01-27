@@ -43,16 +43,38 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="input-group mb-4 col-md-6" >
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">Website</span>
+                                            
+                                            <div class="row">
+                                                <div class="mb-4 col-md-6" >
+                                                    <div class="input-group">
+
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Website</span>
+                                                        </div>
+                                                        <select class="form-control custom-select" id="website_id" name="website_id" required>
+                                                            <option value="">-- Select Website -- </option>
+                                                            @foreach ($websites as $website)
+                                                                <option value="{{$website->id}}">{{$website->url}} </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                                <select class="form-control custom-select" id="website_id" name="website_id" required>
-                                                    <option value="">-- Select Website -- </option>
-                                                    @foreach ($websites as $website)
-                                                        <option value="{{$website->id}}">{{$website->url}} </option>
-                                                    @endforeach
-                                                </select>
+                                                <div class=" mb-4 col-md-6" >
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">Status</span>
+                                                        </div>
+                                                        <select class="form-control custom-select" name="status" id="status" required>
+                                                            <option value="">-- Select Status -- </option>
+                                                            <option value="Pending">Pending </option>
+                                                            <option value="Submitted">Submitted </option>
+                                                            <option value="Correction Required">Correction Required </option>
+                                                            <option value="Approved">Approved </option>
+                                                            <option value="Acknowledged">Acknowledged </option>
+                                                            <option value="Cancelled">Cancelled </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div  class="col-12 col-md-6 mb-3">
                                                 <input placeholder="search User" autocomplete="off" type="text" size="30" name="user_name" class="form-control" id="user_name" value="{{$assigned_user->name}}" onkeyup="searchUser(this.value)" required>
@@ -381,6 +403,7 @@
 $(document).ready(function() {
     $('#region_target').val({{$task->region_target}});
     $('#website_id').val({{$task->website_id}});
+    $('#status').val('{{$task->status}}');
 });
 //function for user live search
 function searchUser(str) {

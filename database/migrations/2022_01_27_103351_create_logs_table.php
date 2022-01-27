@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWebsitesTable extends Migration
+class CreateLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,15 @@ class CreateWebsitesTable extends Migration
      */
     public function up()
     {
-        Schema::create('websites', function (Blueprint $table) {
+        Schema::create('logs', function (Blueprint $table) {
             $table->id();
+            $table->string('message');
+            $table->string('model');
+            $table->string('model_id');
             $table->string('url');
-            $table->string('website_code')->unique();
-            $table->foreignId('region_id')->constrained()->onDelete('cascade');
-            $table->foreignId('parent_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('status')->default('unseen');
+            $table->uuid('reciever_id');
+            $table->foreign('reciever_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -30,6 +33,6 @@ class CreateWebsitesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('websites');
+        Schema::dropIfExists('logs');
     }
 }

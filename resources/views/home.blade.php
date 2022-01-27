@@ -69,9 +69,7 @@
                                     <th width="10%">type</th>
                                     <th width="5%">word count</th>
                                     <th width="10%">submitted on</th>
-                                    @if (Auth::user()->type =='Admin')
-                                        <th width="5%">action</th>
-                                    @endif
+                                    <th width="5%">action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,6 +87,10 @@
                                                 <span class="ms-2 me-2 badge bg-pill bg-primary"> {{$task->status}}</span>
                                             @elseif ($task->status == 'Approved')
                                                 <span class="ms-2 me-2 badge bg-pill bg-success"> {{$task->status}}</span>
+                                            @elseif ($task->status == 'Cancelled')
+                                                <span class="ms-2 me-2 badge bg-pill bg-danger"> {{$task->status}}</span>
+                                            @elseif ($task->status == 'Acknowledged')
+                                                <span class="ms-2 me-2 badge bg-pill bg-secondary"> {{$task->status}}</span>
                                             @else
                                                 <span class="ms-2 me-2 badge bg-pill bg-warning"> {{$task->status}}</span>
                                             @endif
@@ -96,25 +98,27 @@
                                         <td>{{$task->task_type}}</td>
                                         <td>{{$task->word_count}}</td>
                                         <td>{{$task->task_submitted_on}}</td>
-                                        @if (Auth::user()->type =='Admin')
-                                            <td class="text-center">
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <i class="fas fa-th"></i>
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        @if (Auth::user()->type ==='Admin')
-                                                            <a href="{{route('task.edit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Edit</a>
-                                                            @if ($task->status !== 'Pending')
-                                                                {{-- <a href="{{route('task.review-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Review</a> --}}
-                                                            @endif
-                                                        @else
-                                                            {{-- <a href="{{route('task.submit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Submit</a> --}}
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <i class="fas fa-th"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    @if (Auth::user()->type ==='Admin')
+                                                        <a href="{{route('task.edit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Edit</a>
+                                                        <a href="{{route('task.copy',['task'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Copy</a>
+                                                        @if ($task->status !== 'Pending')
+                                                            {{-- <a href="{{route('task.review-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Review</a> --}}
                                                         @endif
-                                                    </div>
+                                                    @else
+                                                        <a href="{{route('task.acknowledge',['id'=>$task->id])}}" 
+                                                            class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Acknowledge</a>
+                                                    @endif
+                                                    <a href="javascript:void(0)" id="cancel-task-button" onclick='cancelTask({{$task}})'
+                                                        class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Cancel</a>
                                                 </div>
-                                            </td>
-                                        @endif
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <div class="alert alert-info text-center">
@@ -125,7 +129,6 @@
                         </table>
                         {{ $tasks->links() }}
                     </div>
-
                 </div>
 
             </div>
@@ -135,6 +138,34 @@
     </div>
     </div>
 </div>
+
+<!-- cancel task modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id= "cancel-task-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Cancel task</h4>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <form action="{{ route('task.cancel')}}" method="post" class="form-group" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                <div class="input-group mb-4" >
+                    <textarea name="reason" placeholder="Type reason here" class="form-control" required></textarea>
+                </div>
+                <input type="hidden" name="task_id" id="task_id">
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success" id = "modal-save">Save changes</button>
+              </div>
+          </form>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+</div>
+  <!-- /.modal -->
 @endsection
 
 @section('scripts')
@@ -166,6 +197,12 @@ $("#search_column").change(function() {
 });
 $("#search_column").trigger("change");
 
+
+//cancel-task modal
+function cancelTask(task){
+    $('#task_id').val(task.id);
+    $('#cancel-task-modal').modal('show');
+}
 </script>
 
 @endsection

@@ -65,12 +65,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="input-group mb-4" >
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"> Bank Details</span>
-                                            </div>
-                                            <input type="text" name="bank_details"class="form-control" placeholder="Bank Details" value="{{ old('bank_details') }}" required>
-                                        </div>
+                                        <textarea name="bank_details" class="form-control mb-4"  placeholder="Enter Bank Details" value="{{ old('bank_details') }}" required></textarea>
 
                                         <div class="row">
                                             <div class="mb-3 col-md-6" >
@@ -105,7 +100,12 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"> Currency</span>
                                                     </div>
-                                                    <input type="text" name="currency"class="form-control" placeholder="currency" value="{{ old('currency') }}" required>
+                                                    <select class="form-control custom-select" name="currency" required>
+                                                        <option value="">-- Select Currency -- </option>
+                                                        @foreach ($currencys as $currency)
+                                                        <option value="{{$currency->id}}">{{$currency->name}} </option>
+                                                        @endforeach
+                                                    </select>
                                                 </div>
                                             </div>
                                             

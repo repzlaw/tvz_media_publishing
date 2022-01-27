@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreUserRequest;
+use App\Models\Currency;
 
 class UserController extends Controller
 {
@@ -27,9 +28,7 @@ class UserController extends Controller
     //users page
     public function index()
     {
-        $users = User::
-                        // where('type','!=','Admin')->
-                        paginate(50);
+        $users = User::paginate(50);
 
         return view('admin/user/index')->with(['users'=> $users]);
     }
@@ -38,8 +37,9 @@ class UserController extends Controller
     public function createView()
     {
         $regions = Region::all();
+        $currencys = Currency::all();
 
-        return view('admin/user/create-user')->with(['regions'=>$regions]);
+        return view('admin/user/create-user')->with(['regions'=>$regions, 'currencys'=>$currencys]);
     }
 
     //search users
@@ -100,8 +100,10 @@ class UserController extends Controller
     {
         $regions = Region::all();
         $user = User::findOrFail($id);
+        $currencys = Currency::all();
 
-        return view('admin/user/edit-user')->with(['user'=>$user, 'regions'=>$regions]);
+
+        return view('admin/user/edit-user')->with(['user'=>$user, 'regions'=>$regions, 'currencys'=>$currencys]);
     }
 
     //update users

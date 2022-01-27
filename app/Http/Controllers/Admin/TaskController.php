@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use ZipArchive;
 use DOMDocument;
 use HTMLPurifier;
+use Carbon\Carbon;
 use App\Models\Link;
 use App\Models\Task;
 use App\Models\User;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTaskRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\CancelTaskRequest;
 use App\Http\Requests\ReviewTaskRequest;
 use App\Http\Requests\SubmitTaskRequest;
 
@@ -50,11 +52,18 @@ class TaskController extends Controller
     //create task
     public function store(StoreTaskRequest $request)
     {
+        $fileNameToStore ='';
+        if ($request->hasFile('attachment')) {
+            $fileNameToStore = process_image($request->file('attachment'));
+            //store file
+            $path = $request->file('attachment')->storeAs('public/tasks/attachments', $fileNameToStore);
+        }
+        
         $task = Task::create([
             'task'=>$request->task,
             'topic'=>$request->topic,
-            // 'word_limit'=>$request->word_limit,
-            // 'time_limit'=>$request->time_limit,
+            'attachment'=>$fileNameToStore,
+            'references'=>$request->references,
             'region_target'=>$request->region_target,
             'website_id'=>$request->website_id,
             'assigned_to'=>$request->assigned_to,
@@ -85,6 +94,7 @@ class TaskController extends Controller
                                             'task'=>$task, 'assigned_user'=>$assigned_user,
                                             'payouts'=>$payouts, 'publishers'=>$publishers,
                                             'links'=>$links]);
+
     }
 
     //update task
@@ -95,8 +105,7 @@ class TaskController extends Controller
         $task->update([
             'task'=>$request->task,
             'topic'=>$request->topic,
-            // 'word_limit'=>$request->word_limit,
-            // 'time_limit'=>$request->time_limit,
+            'status'=>$request->status,
             'region_target'=>$request->region_target,
             'website_id'=>$request->website_id,
             'assigned_to'=>$request->assigned_to,
@@ -224,5 +233,67 @@ class TaskController extends Controller
             return redirect('tasks/')->with(['message'=>'invalid search column']);
         }
 
+    }
+
+    //cancel task
+    public function cancelTask(CancelTaskRequest $request)
+    {
+        $user =Auth::user();
+        $task = Task::findOrFail($request->task_id);
+
+        if ($user->type === 'Admin') {
+            $task->update([
+                'admin_notes'=> $request->reason,
+                'status'=> 'Cancelled'
+            ]);
+        } else if ($user->type === 'Writer') {
+            $task->update([
+                'writer_notes'=> $request->reason,
+                'status'=> 'Cancelled'
+            ]);
+        }
+        else {
+            $task->update([
+                'editor_notes'=> $request->reason,
+                'status'=> 'Cancelled'
+            ]);
+        }
+
+        $message = 'Task Cancelled Successfully!';
+
+        return redirect()->back()->with(['message' => $message]);
+
+
+    }
+
+    //acknowlegde task
+    public function acknowledgeTask(Task $task)
+    {
+        $user =Auth::user();
+
+        if ($user->type !== 'Admin') {
+            $task->update([
+                'status'=> 'Acknowledged'
+            ]);
+        }
+        
+        $message = 'Task Acknowlegded Successfully!';
+
+        return redirect()->back()->with(['message' => $message]);
+    }
+
+    //copy task
+    public function copyTask(Task $task)
+    {
+        $current_date_time = Carbon::now()->toDateTimeString();
+        
+        $newTask = $task->replicate();
+        $newTask->status = 'Pending';
+        $newTask->task_given_on = $current_date_time;
+        $newTask->created_at = $current_date_time;
+        $newTask->updated_at = $current_date_time;
+        $newTask->save();
+        
+        return redirect('/task/edit/'.$newTask->id);
     }
 }

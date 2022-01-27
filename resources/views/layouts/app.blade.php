@@ -6,6 +6,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="developer" content="repzlaw">
 
     <title>@yield('title','TVZ Media Publish')</title>
     <!-- <meta name="keywords" content="@yield('meta_keywords','some default keywords')"> -->
@@ -33,12 +34,13 @@
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
 
     <style>
-            body {
-                font-family: 'Nunito', sans-serif;
-                background-color: #212529;
-                background-image: linear-gradient(135deg, #0e47ab  0%, #052560  100%) !important;
-            }
-        </style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #212529;
+            background-image: linear-gradient(135deg, #0e47ab  0%, #052560  100%) !important;
+        }
+    </style>
+    @yield('styles')
 </head>
 <body>
 <div id="app">
@@ -122,6 +124,13 @@
                 <a class="nav-link" href="{{ route('admin.payout.all') }}">
                     <i class="fa fa-money-bill-wave me-2"></i>
                 Payouts
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.currency.all') }}">
+                    <i class="fa fa-money-bill-wave me-2"></i>
+                Currencies
                 </a>
             </li>
 

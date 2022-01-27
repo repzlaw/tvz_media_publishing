@@ -24,17 +24,17 @@ class WebsiteController extends Controller
     //websites page
     public function index()
     {
-        $websites = Website::paginate(50);
+        $websites = Website::where('parent_id',NULL)->paginate(50);
         $regions = Region::all();
-        $parents = Parents::all();
-        
+        $parents = Parents::with(['websites'])->orderBy('name','asc')->get();
+        // return $parents;
         return view('admin/website/index')->with(['websites'=> $websites, 'regions'=> $regions, 'parents'=> $parents]);
     }
 
     //create websites
     public function create(StoreWebsiteRequest $request)
     {
-        $website = Website::create($request->validated());
+        $website = Website::create($request->only('website_code','url','region_id','parent_id'));
 
         if ($website) {
             $message = 'Website Created Successfully!';
@@ -48,7 +48,7 @@ class WebsiteController extends Controller
     {
         $website = Website::findOrFail($request->website_id);
 
-        $update = $website->update($request->validated());
+        $update = $website->update($request->only('website_code','url','region_id','parent_id'));
 
         if ($update) {
             $message = 'website Updated Successfully!';

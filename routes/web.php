@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\PayoutController;
 use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\ParentsController;
 use App\Http\Controllers\Admin\WebsiteController;
+use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\GeneralFunctionsController;
 use App\Http\Controllers\TaskConversationController;
 
@@ -40,6 +42,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/submit-review', [TaskController::class,'submitReview'])->name('submit-review');
         Route::post('/download-document', [TaskController::class,'downloadDocument'])->name('download-document');
         Route::post('/search', [TaskController::class, 'searchUser'])->name('search');
+        Route::post('/cancel', [TaskController::class, 'cancelTask'])->name('cancel');
+        Route::get('/acknowledge/{task}', [TaskController::class, 'acknowledgeTask'])->name('acknowledge');
+        Route::get('/copy/{task}', [TaskController::class, 'copyTask'])->name('copy');
 
         //conversations routes
         Route::prefix('/conversations')->name('conversation.')->middleware(['verified'])->group(function(){
@@ -96,6 +101,37 @@ Route::middleware(['auth'])->group(function () {
 
             //edit region
             Route::post('/edit', [RegionController::class,'edit'])->name('edit');
+
+        });
+
+        //Currencys routes
+        Route::prefix('/currencies')->name('currency.')->middleware(['admin'])->group(function(){
+
+            // get Currencys page
+            Route::get('/', [CurrencyController::class, 'index'])->name('all');
+
+            // delete Currencys
+            Route::get('/delete/{id}', [CurrencyController::class, 'delete'])->name('delete');
+
+            //create Currency
+            Route::post('/create', [CurrencyController::class,'create'])->name('create');
+
+            //edit Currency
+            Route::post('/edit', [CurrencyController::class,'edit'])->name('edit');
+
+        });
+
+        //parent routes
+        Route::prefix('/parents')->name('parent.')->middleware(['admin'])->group(function(){
+
+            // delete Parents
+            Route::get('/delete/{id}', [ParentsController::class, 'delete'])->name('delete');
+
+            //create Parents
+            Route::post('/create', [ParentsController::class,'create'])->name('create');
+
+            //edit Parents
+            Route::post('/edit', [ParentsController::class,'edit'])->name('edit');
 
         });
 

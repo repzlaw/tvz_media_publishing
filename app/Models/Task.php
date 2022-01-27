@@ -9,4 +9,14 @@ class Task extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $with = ['payout:id,status'];
+
+
+    /**
+     * Get the payout for the is for.
+     */
+    public function payout()
+    {
+        return $this->belongsTo(Payout::class);
+    }
 }

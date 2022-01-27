@@ -81,6 +81,19 @@
                                             <div class="mb-3 col-md-6" >
                                                 <div class="input-group mb-4 col-md-6" >
                                                     <div class="input-group-prepend">
+                                                        <span class="input-group-text">Attachment</span>
+                                                    </div>
+                                                    <input type="file" name="attachment" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-6" >
+                                                <div class="input-group mb-4 col-md-6" >
+                                                    <textarea name="references" class="form-control" placeholder="Add references"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-6" >
+                                                <div class="input-group mb-4 col-md-6" >
+                                                    <div class="input-group-prepend">
                                                         <span class="input-group-text">Task Type</span>
                                                     </div>
                                                     <select class="form-control custom-select" name="task_type" id="task_type" required>
@@ -94,7 +107,6 @@
                                         <div  class="col-12 col-md-6 mb-3">
                                             <input placeholder="Assign User" autocomplete="off" type="text" size="30" name="user_name" class="form-control" id="user_name" onkeyup="searchUser(this.value)" required>
                                             <ul id="user-search" class="list-group"></ul>
-
                                         </div>
                                          <input type="hidden" name="assigned_to" id="user_id" class="form-control" value="{{ old('assigned_to') }}" required>
 
@@ -147,9 +159,19 @@
                                             Payout Management <a href="#" id="create-payout-button">Add Payout</a> | <a href="#">Search Payout</a>
                                         </div> --}}
                                         {{-- <input type="hidden" name="task_id" id="user_id" class="form-control" value="{{ old('assigned_to') }}" required> --}}
+                                        <div class="row">
+                                            <div class="mb-3 col-md-6" >
+                                                <div class="input-group mb-4 col-md-6" >
+                                                    <textarea name="admin_notes" class="form-control" placeholder="Add notes"></textarea>
+                                                </div>
+                                            </div>
 
-                                        <textarea name="instructions" id="instructions" rows="5" class="form-control"  placeholder="type instructions ..." value="{{ old('instructions') }}" required></textarea>
-
+                                            <div class="mb-3 col-md-6" >
+                                                <div class="input-group mb-4 col-md-6" >
+                                                    <textarea name="instructions" class="form-control" placeholder="Add instructions" required></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                       <div class="modal-footer">
                                         {{-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> --}}

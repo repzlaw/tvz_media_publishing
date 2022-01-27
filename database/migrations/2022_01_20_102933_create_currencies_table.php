@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWebsitesTable extends Migration
+class CreateCurrenciesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreateWebsitesTable extends Migration
      */
     public function up()
     {
-        Schema::create('websites', function (Blueprint $table) {
+        Schema::create('currencies', function (Blueprint $table) {
             $table->id();
-            $table->string('url');
-            $table->string('website_code')->unique();
-            $table->foreignId('region_id')->constrained()->onDelete('cascade');
-            $table->foreignId('parent_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('code');
+            $table->string('symbol')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +29,6 @@ class CreateWebsitesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('websites');
+        Schema::dropIfExists('currencies');
     }
 }

@@ -35,8 +35,11 @@ class CreateTasksTable extends Migration
             $table->string('published_date')->nullable();
             $table->string('published_url')->nullable();
             $table->foreignId('link_id')->nullable()->constrained('links')->onDelete('cascade');
-            $table->enum('status', ['Submitted', 'Pending', 'Correction Required', 'Approved'])->default('Pending');
+            $table->enum('status', ['Submitted', 'Pending', 'Correction Required', 'Approved','Cancelled','Acknowledged'])->default('Pending');
             $table->string('feedback')->nullable();
+            $table->string('admin_notes')->nullable();
+            $table->string('editor_notes')->nullable();
+            $table->string('writer_notes')->nullable();
             $table->timestamps();
         });
     }
