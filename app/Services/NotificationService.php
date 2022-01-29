@@ -20,4 +20,11 @@ class NotificationService
 
         return response()->json(['status'=>'ok','log'=> $log], 200);
     }
+
+    public function count()
+    {
+        $log = Log::where(['reciever_id'=>Auth::id(), 'status'=>'unseen'])->count();
+        
+        return $log;
+    }
 }

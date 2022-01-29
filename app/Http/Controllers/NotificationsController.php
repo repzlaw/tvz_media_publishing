@@ -12,7 +12,7 @@ class NotificationsController extends Controller
     public function index()
     {
         $logs = Log::orderBy('created_at','desc')
-                ->where(['reciever_id'=> Auth::id()])->paginate(30)->groupBy(function($item) {
+                ->where(['reciever_id'=> Auth::id()])->paginate(50)->groupBy(function($item) {
             return $item->created_at->isoFormat('dddd MMMM D ');
        });
     //   return($logs); 

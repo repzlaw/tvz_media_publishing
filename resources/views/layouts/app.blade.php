@@ -144,8 +144,11 @@
           <li class="nav-item">
             <a class="nav-link" href="/notifications">
                 <i class=" fa fa-solid fa-bell me-2 ml-2"></i>
+                @inject('count', 'App\Services\NotificationService')
               Notifications 
-              {{-- <span class="badge bg-pill bg-secondary">2</span> --}}
+              @if ($count->count())
+                <span class="badge bg-pill bg-secondary">{{ $count->count() }}</span>
+              @endif
             </a>
           </li>
           @if (Auth::user()->type === 'Admin')

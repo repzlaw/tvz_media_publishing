@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CancelTaskRequest;
 use App\Http\Requests\ReviewTaskRequest;
 use App\Http\Requests\SubmitTaskRequest;
+use App\Models\Configuration;
 
 class TaskController extends Controller
 {
@@ -98,8 +99,11 @@ class TaskController extends Controller
             );
             $admin = Auth::user();
             $user = User::findOrFail($request->assigned_to);
+            $config = Configuration::where('key','new_task_email')->first();
 
-            Mail::to($user->email, $user->name)->queue(new TaskCreated($user,$admin));
+            if ($config) {
+                $config->value ? Mail::to($user->email, $user->name)->queue(new TaskCreated($user,$admin)): '';
+            }
 
             $message = 'Task Created Successfully!';
         }
