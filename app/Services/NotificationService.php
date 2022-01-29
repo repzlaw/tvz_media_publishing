@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Log;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationService
 {
@@ -13,6 +14,7 @@ class NotificationService
             'model'=>$model,
             'url'=>$url,
             'reciever_id'=>$reciever_id,
+            'causer_id'=>Auth::id(),
             'model_id'=>$model_id
         ]);
 

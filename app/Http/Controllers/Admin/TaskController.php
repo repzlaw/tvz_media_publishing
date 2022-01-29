@@ -13,12 +13,15 @@ use App\Models\Payout;
 use App\Models\Region;
 use App\Models\Website;
 use HTMLPurifier_Config;
+use App\Mail\TaskCreated;
 use App\Models\Publisher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Services\NotificationService;
 use App\Http\Requests\StoreTaskRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CancelTaskRequest;
@@ -27,6 +30,18 @@ use App\Http\Requests\SubmitTaskRequest;
 
 class TaskController extends Controller
 {
+    protected $NotificationService;
+
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(NotificationService $NotificationService)
+    {
+        $this->NotificationService = $NotificationService;
+    }
+
     //return task page
     public function index()
     {
@@ -69,10 +84,23 @@ class TaskController extends Controller
             'assigned_to'=>$request->assigned_to,
             'instructions'=>$request->instructions,
             'task_type'=>$request->task_type,
-            'task_given_on'=>date("Y-m-d H:i:s")
+            'task_given_on'=>date("Y-m-d H:i:s"),
+            'admin_id'=>Auth::id()
         ]);
 
         if ($task) {
+            $this->NotificationService->create(
+                'A task was assigned to you',
+                'Task',
+                $task->id,
+                'task',
+                $request->assigned_to,
+            );
+            $admin = Auth::user();
+            $user = User::findOrFail($request->assigned_to);
+
+            Mail::to($user->email, $user->name)->queue(new TaskCreated($user,$admin));
+
             $message = 'Task Created Successfully!';
         }
 
@@ -100,7 +128,6 @@ class TaskController extends Controller
     //update task
     public function update(StoreTaskRequest $request)
     {
-        // dd($request->all());
         $task = Task::findOrFail($request->task_id);
         $task->update([
             'task'=>$request->task,
@@ -159,6 +186,13 @@ class TaskController extends Controller
             ]);
 
             if ($tasks) {
+                $this->NotificationService->create(
+                    'A task has been submitted',
+                    'Task',
+                    $task->id,
+                    'task',
+                    $task->admin_id,
+                );
                 $message = 'Task Document Uploaded!';
             }
     
@@ -276,7 +310,13 @@ class TaskController extends Controller
                 'status'=> 'Acknowledged'
             ]);
         }
-        
+        $this->NotificationService->create(
+            'A task has been acknowlegded',
+            'Task',
+            $task->id,
+            'task',
+            $task->admin_id,
+        );
         $message = 'Task Acknowlegded Successfully!';
 
         return redirect()->back()->with(['message' => $message]);

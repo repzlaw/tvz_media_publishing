@@ -9,7 +9,9 @@ use App\Http\Controllers\Admin\PayoutController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\Admin\ParentsController;
 use App\Http\Controllers\Admin\WebsiteController;
+use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\Admin\CurrencyController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\GeneralFunctionsController;
 use App\Http\Controllers\TaskConversationController;
 
@@ -28,7 +30,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [HomeController::class,'index'])->name('home');
 
     Route::post('/search-user', [GeneralFunctionsController::class,'searchUser'])->name('search-user');
-
 
     Route::prefix('/task')->middleware(['verified'])->name('task.')->group(function () {
         Route::get('/', [TaskController::class,'index'])->name('all');
@@ -55,8 +56,14 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/update', [PayoutController::class,'update'])->name('update');
             Route::post('/map-to-task', [PayoutController::class,'mapToTask'])->name('map');
 
-
         });
+    });
+
+    //notifications routes
+    Route::prefix('/notifications')->name('notification.')->middleware(['verified'])->group(function(){
+        Route::get('/', [NotificationsController::class, 'index'])->name('all');
+        Route::get('/{log}', [NotificationsController::class,'single'])->name('single');
+       
     });
 
 
@@ -176,6 +183,13 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/map-to-task', [LinkController::class,'mapToTask'])->name('map');
 
 
+        });
+
+        //settings route
+        Route::prefix('/settings')->name('setting.')->middleware(['admin'])->group(function(){
+            Route::get('/', [SettingsController::class, 'index'])->name('all');
+            Route::post('/save', [SettingsController::class, 'save'])->name('save');
+            
         });
 
     });

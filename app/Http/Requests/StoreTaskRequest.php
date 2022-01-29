@@ -32,7 +32,7 @@ class StoreTaskRequest extends FormRequest
             'website_id'=>'required',
             'assigned_to'=>'required',
             'task_type'=>'required',
-            'status'=>'required'
+            // 'status'=>'required'
         ];
     }
 }

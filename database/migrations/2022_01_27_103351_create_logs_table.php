@@ -22,6 +22,8 @@ class CreateLogsTable extends Migration
             $table->string('status')->default('unseen');
             $table->uuid('reciever_id');
             $table->foreign('reciever_id')->references('id')->on('users')->onDelete('cascade');
+            $table->uuid('causer_id');
+            $table->foreign('causer_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

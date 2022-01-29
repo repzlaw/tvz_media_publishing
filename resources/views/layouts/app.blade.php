@@ -141,12 +141,21 @@
               Task
             </a>
           </li>
-          {{-- <li class="nav-item">
-            <a class="nav-link" href="">
-                <i class="fa fa-cog me-2"></i>
-              Settings
+          <li class="nav-item">
+            <a class="nav-link" href="/notifications">
+                <i class=" fa fa-solid fa-bell me-2 ml-2"></i>
+              Notifications 
+              {{-- <span class="badge bg-pill bg-secondary">2</span> --}}
             </a>
-          </li> --}}
+          </li>
+          @if (Auth::user()->type === 'Admin')
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/settings">
+                    <i class="fa fa-cog me-2"></i>
+                Settings
+                </a>
+            </li>
+        @endif
         </ul>
       </div>
     </nav>

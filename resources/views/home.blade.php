@@ -111,7 +111,7 @@
                                                             {{-- <a href="{{route('task.review-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Review</a> --}}
                                                         @endif
                                                     @else
-                                                        <a href="{{route('task.acknowledge',['id'=>$task->id])}}" 
+                                                        <a href="{{route('task.acknowledge',['task'=>$task->id])}}" 
                                                             class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Acknowledge</a>
                                                     @endif
                                                     <a href="javascript:void(0)" id="cancel-task-button" onclick='cancelTask({{$task}})'

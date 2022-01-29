@@ -9,8 +9,6 @@ class GeneralFunctionsController extends Controller
     //search user
     public function searchUser(Request $request)
     {
-        // dd($request->all());
-
         if ($request->ajax()) {
             $q = $request->input('q');
             $from = $request->input('from');

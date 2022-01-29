@@ -112,7 +112,7 @@
                                                         <a href="{{route('task.copy',['task'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Copy</a>
                                                     @else
                                                         @if ($task->status !== 'Cancelled' && $task->status != 'Acknowledged')
-                                                            <a href="{{route('task.acknowledge',['id'=>$task->id])}}" 
+                                                            <a href="{{route('task.acknowledge',['task'=>$task->id])}}" 
                                                                 class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Acknowledge</a>
                                                         @endif
                                                     @endif

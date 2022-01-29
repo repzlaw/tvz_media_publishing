@@ -27,6 +27,8 @@ class CreateTasksTable extends Migration
             $table->string('word_count')->nullable();
             $table->uuid('assigned_to');
             $table->foreign('assigned_to')->references('id')->on('users')->onDelete('cascade');
+            $table->uuid('admin_id');
+            $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('region_target')->constrained('regions')->onDelete('cascade');
             $table->foreignId('website_id')->constrained('websites')->onDelete('cascade');
             $table->enum('task_type', ['Internal', 'External'])->default('Internal');
