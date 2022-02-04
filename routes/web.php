@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TaskNoteController;
 use App\Http\Controllers\Admin\LinkController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Admin\ParentsController;
 use App\Http\Controllers\Admin\WebsiteController;
 use App\Http\Controllers\NotificationsController;
 use App\Http\Controllers\Admin\CurrencyController;
+use App\Http\Controllers\Admin\FeedbackController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\GeneralFunctionsController;
 use App\Http\Controllers\TaskConversationController;
@@ -46,6 +48,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/cancel', [TaskController::class, 'cancelTask'])->name('cancel');
         Route::get('/acknowledge/{task}', [TaskController::class, 'acknowledgeTask'])->name('acknowledge');
         Route::get('/copy/{task}', [TaskController::class, 'copyTask'])->name('copy');
+        Route::post('/save-feedback', [FeedbackController::class, 'saveFeedback'])->name('feedback');
+        Route::get('/notes/{task}', [TaskNoteController::class, 'index'])->name('view-notes');
+        Route::post('/save-notes', [TaskNoteController::class, 'saveNotes'])->name('store-notes');
+        Route::post('/share-notes', [TaskNoteController::class, 'shareNotes'])->name('share-notes');
 
         //conversations routes
         Route::prefix('/conversations')->name('conversation.')->middleware(['verified'])->group(function(){
@@ -63,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/notifications')->name('notification.')->middleware(['verified'])->group(function(){
         Route::get('/', [NotificationsController::class, 'index'])->name('all');
         Route::get('/{log}', [NotificationsController::class,'single'])->name('single');
+        Route::post('/change-status', [NotificationsController::class,'changeStatus'])->name('change-status');
        
     });
 

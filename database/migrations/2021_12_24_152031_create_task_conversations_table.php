@@ -14,10 +14,11 @@ class CreateTaskConversationsTable extends Migration
     public function up()
     {
         Schema::create('task_conversations', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('message');
             $table->string('file_path')->nullable();
-            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->uuid('task_id');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->uuid('sender_id');
             $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

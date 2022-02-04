@@ -15,7 +15,8 @@ class CreateTaskMessagingsTable extends Migration
     {
         Schema::create('task_messagings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->uuid('task_id');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->foreignId('message_id')->constrained('messagings')->onDelete('cascade');
             $table->foreignId('document_id')->constrained()->onDelete('cascade');
             $table->uuid('user_id');

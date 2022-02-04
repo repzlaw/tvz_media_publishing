@@ -17,7 +17,8 @@ class CreateIdeasTable extends Migration
             $table->id();
             $table->string('topic_title');
             $table->string('topic_instructions');
-            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->uuid('task_id');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             $table->foreignId('website_id')->constrained()->onDelete('cascade');
             $table->foreignId('region_id')->constrained()->onDelete('cascade');
             $table->foreignId('link_id')->constrained()->onDelete('cascade');

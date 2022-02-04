@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,14 +26,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        if ($user->type === 'Admin') {
-            $tasks= Task::latest()->paginate(10);
-        } else {
-            $tasks = Task::where('assigned_to',$user->id)->latest()->paginate(10);
-        }
-        
-        return view('home')->with(['tasks'=>$tasks]);
+        $logs = Log::orderBy('created_at','desc')
+                ->where(['reciever_id'=> Auth::id()])->paginate(50)->groupBy(function($item) {
+            return $item->created_at->isoFormat('dddd MMMM D ');
+        });
+
+        return view('home')->with(['logs'=>$logs]);
         
     }
 }

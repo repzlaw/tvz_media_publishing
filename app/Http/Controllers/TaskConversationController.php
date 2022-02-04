@@ -15,7 +15,6 @@ class TaskConversationController extends Controller
     {
         $task = Task::findOrFail($task_id);
         $conversations = TaskConversation::where('task_id',$task_id)->get();
-        // return $conversations;
         return view('task.conversation.index')->with(['conversations'=>$conversations,'task'=>$task]);
     }
 

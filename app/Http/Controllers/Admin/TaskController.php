@@ -53,7 +53,7 @@ class TaskController extends Controller
             $tasks = Task::where('assigned_to',$user->id)->latest()->paginate(10);
         }
 
-        return view('admin/tasks')->with(['tasks' => $tasks]);
+        return view('task/tasks')->with(['tasks' => $tasks]);
     }
 
     //create view task
@@ -62,7 +62,7 @@ class TaskController extends Controller
         $regions = Region::all();
         $websites = Website::all();
 
-        return view('admin/create-task')->with(['regions'=>$regions, 'websites'=>$websites]);
+        return view('task/create-task')->with(['regions'=>$regions, 'websites'=>$websites]);
     }
 
     //create task
@@ -91,10 +91,10 @@ class TaskController extends Controller
 
         if ($task) {
             $this->NotificationService->create(
-                'A task was assigned to you',
+                'A task was assigned to you by '. ' ' .Auth::user()->name,
                 'Task',
                 $task->id,
-                'task',
+                'task/conversations/'.$task->id,
                 $request->assigned_to,
             );
             $admin = Auth::user();
@@ -122,7 +122,7 @@ class TaskController extends Controller
         $assigned_user = User::where('id',$task->assigned_to)->first(['name']);
         $payouts = Payout::where(['task_id'=>null, 'user_id'=>$task->assigned_to])->get();
 
-        return view('admin/edit-task')->with(['regions'=>$regions, 'websites'=>$websites,
+        return view('task/edit-task')->with(['regions'=>$regions, 'websites'=>$websites,
                                             'task'=>$task, 'assigned_user'=>$assigned_user,
                                             'payouts'=>$payouts, 'publishers'=>$publishers,
                                             'links'=>$links]);
@@ -156,7 +156,7 @@ class TaskController extends Controller
     {
         $task = Task::findOrFail($id);
 
-        return view('admin/submit-task')->with(['task'=>$task]);
+        return view('task/submit-task')->with(['task'=>$task]);
     }
 
     //submit task
@@ -194,7 +194,7 @@ class TaskController extends Controller
                     'A task has been submitted',
                     'Task',
                     $task->id,
-                    'task',
+                    'task/conversations/'.$task->id,
                     $task->admin_id,
                 );
                 $message = 'Task Document Uploaded!';
@@ -209,7 +209,7 @@ class TaskController extends Controller
     {
         $task = Task::findOrFail($id);
 
-        return view('admin/review-task')->with(['task'=>$task]);
+        return view('task/review-task')->with(['task'=>$task]);
     }
 
     //submit review
@@ -308,6 +308,7 @@ class TaskController extends Controller
     public function acknowledgeTask(Task $task)
     {
         $user =Auth::user();
+        $assigned_user = User::findOrFail($task->assigned_to);
 
         if ($user->type !== 'Admin') {
             $task->update([
@@ -315,10 +316,10 @@ class TaskController extends Controller
             ]);
         }
         $this->NotificationService->create(
-            'A task has been acknowlegded',
+           $task->task. ' '. ' task has been acknowlegded by '. ' '.$assigned_user->name ,
             'Task',
             $task->id,
-            'task',
+            'task/conversations/'.$task->id,
             $task->admin_id,
         );
         $message = 'Task Acknowlegded Successfully!';

@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class MapPayoutToTaskRequest extends FormRequest
+class StoreFeedbackRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +14,11 @@ class MapPayoutToTaskRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        if (Auth::user()->type ==='Admin') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -24,7 +29,8 @@ class MapPayoutToTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'task_id'=>'required',
+            'feedback'=>'required',
         ];
     }
 }

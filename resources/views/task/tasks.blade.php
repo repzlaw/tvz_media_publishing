@@ -91,6 +91,8 @@
                                                 <span class="ms-2 me-2 badge bg-pill bg-danger"> {{$task->status}}</span>
                                             @elseif ($task->status == 'Acknowledged')
                                                 <span class="ms-2 me-2 badge bg-pill bg-secondary"> {{$task->status}}</span>
+                                            @elseif ($task->status == 'Feedback')
+                                                <span class="ms-2 me-2 badge bg-pill bg-dark"> {{$task->status}}</span>
                                             @else
                                                 <span class="ms-2 me-2 badge bg-pill bg-warning"> {{$task->status}}</span>
                                             @endif
@@ -110,8 +112,12 @@
                                                     @if (Auth::user()->type ==='Admin')
                                                         <a href="{{route('task.edit-view',['id'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Edit</a>
                                                         <a href="{{route('task.copy',['task'=>$task->id])}}" class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Copy</a>
+                                                        @if ($task->status === 'Submitted' || $task->status === 'Approved' || $task->status === 'Feedback')
+                                                            <a href="javascript:void(0)" id="feedback-button" onclick='giveFeedback({{$task}})'
+                                                                class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Give Feedback</a>
+                                                        @endif
                                                     @else
-                                                        @if ($task->status !== 'Cancelled' && $task->status != 'Acknowledged')
+                                                        @if ($task->status === 'Pending')
                                                             <a href="{{route('task.acknowledge',['task'=>$task->id])}}" 
                                                                 class="dropdown-item btn btn-outline-dark btn-sm mr-3" > Acknowledge</a>
                                                         @endif
@@ -171,6 +177,34 @@
   </div>
 </div>
   <!-- /.modal -->
+
+<!-- cancel task modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id= "feedback-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Give Feedback</h4>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <form action="{{ route('task.feedback')}}" method="post" class="form-group" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+                <div class="input-group mb-4" >
+                    <textarea name="feedback" placeholder="Type feedback here" class="form-control" required></textarea>
+                </div>
+                <input type="hidden" name="task_id" id="feedback-task_id">
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-success" id = "modal-save">Save changes</button>
+              </div>
+          </form>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div>
+</div>
+  <!-- /.modal -->
 @endsection
 
 @section('scripts')
@@ -207,6 +241,12 @@ $("#search_column").trigger("change");
 function cancelTask(task){
     $('#task_id').val(task.id);
     $('#cancel-task-modal').modal('show');
+}
+
+//feedback-task modal
+function giveFeedback(task){
+    $('#feedback-task_id').val(task.id);
+    $('#feedback-modal').modal('show');
 }
 </script>
 

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class MapPayoutToTaskRequest extends FormRequest
+class StoreNoteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,8 @@ class MapPayoutToTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'note'=>'required',
+            'task_id'=>'required'
         ];
     }
 }

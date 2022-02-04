@@ -15,7 +15,8 @@ class CreateDocumentsTable extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->uuid('task_id');
+            $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             // $table->foreignId('task_message_id')->constrained('task_messagings')->onDelete('cascade');
             $table->string('task_message_id');
             $table->string('document_upload_path');

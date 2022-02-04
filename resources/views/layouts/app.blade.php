@@ -147,7 +147,7 @@
                 @inject('count', 'App\Services\NotificationService')
               Notifications 
               @if ($count->count())
-                <span class="badge bg-pill bg-secondary">{{ $count->count() }}</span>
+                <span class="badge bg-pill bg-danger">{{ $count->count() }}</span>
               @endif
             </a>
           </li>

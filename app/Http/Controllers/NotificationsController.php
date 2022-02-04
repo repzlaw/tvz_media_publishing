@@ -15,7 +15,6 @@ class NotificationsController extends Controller
                 ->where(['reciever_id'=> Auth::id()])->paginate(50)->groupBy(function($item) {
             return $item->created_at->isoFormat('dddd MMMM D ');
        });
-    //   return($logs); 
        return view('notification/index')->with(['logs'=>$logs]);
 
     }
@@ -28,5 +27,22 @@ class NotificationsController extends Controller
         ]);
 
         return redirect('/'.$log->url);
+    }
+
+    //mark read or unread
+    public function changeStatus(Request $request)
+    {
+        $log = Log::findOrFail($request->notification_id);
+        if ($log->status === 'unseen') {
+            $log->update([
+                'status'=>'seen'
+            ]);
+        } else if($log->status === 'seen') {
+            $log->update([
+                'status'=>'unseen'
+            ]);
+        }
+
+        return $log;
     }
 }

@@ -14,7 +14,7 @@ class CreateTasksTable extends Migration
     public function up()
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('task')->nullable();
             $table->string('topic')->nullable();
             $table->string('instructions')->nullable();
@@ -37,11 +37,13 @@ class CreateTasksTable extends Migration
             $table->string('published_date')->nullable();
             $table->string('published_url')->nullable();
             $table->foreignId('link_id')->nullable()->constrained('links')->onDelete('cascade');
-            $table->enum('status', ['Submitted', 'Pending', 'Correction Required', 'Approved','Cancelled','Acknowledged'])->default('Pending');
+            $table->enum('status', ['Submitted', 'Pending', 'Correction Required', 'Approved','Cancelled','Acknowledged','Feedback'])->default('Pending');
             $table->string('feedback')->nullable();
             $table->string('admin_notes')->nullable();
             $table->string('editor_notes')->nullable();
             $table->string('writer_notes')->nullable();
+            $table->string('attachment')->nullable();
+            $table->string('references')->nullable();
             $table->timestamps();
         });
     }

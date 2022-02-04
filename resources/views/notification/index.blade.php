@@ -18,12 +18,17 @@
                                     <p>{{$key}}</p>
                                     <ul class="list-group list-group-flush">
                                         @foreach ($log as $keys=>$lo)
-                                        <li class="list-group-item p-4 " style="background:{{$lo->status === 'unseen' ?  '#e7f1fc' : 'white'}}; border-radius:5%">
+                                        <li class="list-group-item p-4" id="list-group{{$lo->id}}"
+                                            style="background:{{$lo->status === 'unseen' ?  '#e7f1fc' : 'white'}}; border-radius:5%">
                                             <a href="{{route('notification.single',['log'=>$lo->id])}}" 
-                                                style="text-decoration: none;">
+                                                style="text-decoration: none;" class="mt-5">
                                                 {{$lo->message}}
-                                                <span class="float-end">{{$lo->created_at->diffForHumans()}} </span>
                                             </a>
+                                                <span class="float-end">{{ Carbon\Carbon::parse($lo->created_at)->format('g:i A' ) }} 
+                                                    <button class="ms-3" id="status-button{{$lo->id}}"
+                                                        style="border-radius:25%" onclick="notificationStatus('{{$lo->id}}')">{{$lo->status === 'unseen' ? 'mark read': 'mark unread'}} </button>
+                                                </span>
+                                                <br>
                                         </li>
                                         @endforeach 
                                     </ul>
@@ -48,7 +53,22 @@
 
 @section('scripts')
 <script>
-
+function notificationStatus(id) {
+    $.ajax({
+            method:'POST',
+            url: '{{ route('notification.change-status')}}',
+            data:{notification_id:id, "_token":"{{csrf_token()}}"}
+        })
+        .done(function(res){
+            if (res.status === 'seen') {
+                $("#list-group"+res.id).css('background','white')
+                $("#status-button"+res.id).text('mark unread')
+            }else{
+                $("#list-group"+res.id).css('background','#e7f1fc')
+                $("#status-button"+res.id).text('mark read')
+            }
+        })
+}
 </script>
 
 @endsection

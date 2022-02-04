@@ -72,6 +72,7 @@
                                                             <option value="Approved">Approved </option>
                                                             <option value="Acknowledged">Acknowledged </option>
                                                             <option value="Cancelled">Cancelled </option>
+                                                            <option value="Feedback">Feedback </option>
                                                         </select>
                                                     </div>
                                                 </div>
